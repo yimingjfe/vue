@@ -24,7 +24,7 @@ import {
  * value into the final value.
  */
 const strats = config.optionMergeStrategies
-
+ 
 /**
  * Options with restrictions
  */

@@ -46,7 +46,7 @@ export class Observer {
       const augment = hasProto
         ? protoAugment
         : copyAugment
-      augment(value, arrayMethods, arrayKeys)
+      augment(value, arrayMethods, arrayKeys)   // 覆盖数组的所有方法
       this.observeArray(value)
     } else {
       this.walk(value)
@@ -58,7 +58,7 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
-  walk (obj: Object) {
+  walk (obj: Object) {    // 经过constructor中的判断，此时可以确定walk的object是一个object，而不是array
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i], obj[keys[i]])
@@ -153,11 +153,11 @@ export function defineReactive (
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
-        dep.depend()
-        if (childOb) {
+        dep.depend()        // Dep.target.addDep(dep)  dep.addWatcher(watcher)
+        if (childOb) {      // 子对象属性变化也会触发watcher
           childOb.dep.depend()
         }
-        if (Array.isArray(value)) {
+        if (Array.isArray(value)) {   // 如果是一个数组的话，数组的每一个值变化，都会触发这个watcher
           dependArray(value)
         }
       }
@@ -166,7 +166,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === value || (newVal !== newVal && value !== value)) { // 后面两个预防什么的？
         return
       }
       /* eslint-enable no-self-compare */
@@ -178,8 +178,8 @@ export function defineReactive (
       } else {
         val = newVal
       }
-      childOb = observe(newVal)
-      dep.notify()
+      childOb = observe(newVal) // 对象替换，要重新观测
+      dep.notify()       // watcher.notify()
     }
   })
 }

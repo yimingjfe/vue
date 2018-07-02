@@ -28,7 +28,7 @@ export type Config = {
   getTagNamespace: (x?: string) => string | void;
   mustUseProp: (tag: string, type: ?string, name: string) => boolean;
 
-  // legacy
+  // legacy 
   _lifecycleHooks: Array<string>;
 };
 

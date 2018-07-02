@@ -35,7 +35,7 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
-      vm.$options = mergeOptions(
+      vm.$options = mergeOptions( 
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
@@ -47,9 +47,9 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       vm._renderProxy = vm
     }
-    // expose real self
+    // expose real self 
     vm._self = vm
-    initLifecycle(vm)
+    initLifecycle(vm) // 设置$parent,将vm加入到parent.$children中，初始化vm上的一些属性
     initEvents(vm)
     initRender(vm)
     callHook(vm, 'beforeCreate')
