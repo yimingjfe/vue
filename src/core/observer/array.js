@@ -21,10 +21,10 @@ const methodsToPatch = [
 /**
  * Intercept mutating methods and emit events
  */
-methodsToPatch.forEach(function (method) {
+methodsToPatch.forEach(function (method) {  // 返回结果，观测新插入的数据，通知更新
   // cache original method
   const original = arrayProto[method]
-  def(arrayMethods, method, function mutator (...args) {
+  def(arrayMethods, method, function mutator (...args) {  // 为什么用def？
     const result = original.apply(this, args)
     const ob = this.__ob__
     let inserted

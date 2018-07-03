@@ -16,7 +16,7 @@ import {
   isServerRendering
 } from '../util/index'
 
-const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
+const arrayKeys = Object.getOwnPropertyNames(arrayMethods)  // 相比Object.keys，能返回不可枚举的属性
 
 /**
  * In some cases we may want to disable observation inside a component's
@@ -43,7 +43,7 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this)    // arrayMethods里面需要操作__ob__
     if (Array.isArray(value)) {
       const augment = hasProto
         ? protoAugment
@@ -160,10 +160,10 @@ export function defineReactive (
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
         dep.depend()        // Dep.target.addDep(dep)  dep.addWatcher(watcher)
-        if (childOb) {      // 子对象属性变化也会触发watcher
+        if (childOb) {      // data{a: {}}  对a的属性set或者delete，等同于a发生了变化
           childOb.dep.depend()
         }
-        if (Array.isArray(value)) {   // 如果是一个数组的话，数组的每一个值变化，都会触发这个watcher
+        if (Array.isArray(value)) {   // 如果是一个数组的话,数组中的元素是对象，对象属性的变化，都会触发Dep.target这个watcher的执行
           dependArray(value)
         }
       }
@@ -172,7 +172,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) { // 后面两个预防什么的？
+      if (newVal === value || (newVal !== newVal && value !== value)) { // value是NaN,或者newValue是NaN就不再处理
         return
       }
       /* eslint-enable no-self-compare */
