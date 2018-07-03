@@ -340,7 +340,36 @@ describe('Component async', () => {
         expect(vm.$el.textContent).toBe('hi')
         expect(`Failed to resolve async component`).not.toHaveBeenWarned()
         done()
-      }, 30)
+      }, 50)
+    })
+
+    // #7107
+    it(`should work when resolving sync in sibling component's mounted hook`, done => {
+      let resolveTwo
+
+      const vm = new Vue({
+        template: `<div><one/> <two/></div>`,
+        components: {
+          one: {
+            template: `<div>one</div>`,
+            mounted () {
+              resolveTwo()
+            }
+          },
+          two: resolve => {
+            resolveTwo = () => {
+              resolve({
+                template: `<div>two</div>`
+              })
+            }
+          }
+        }
+      }).$mount()
+
+      expect(vm.$el.textContent).toBe('one ')
+      waitForUpdate(() => {
+        expect(vm.$el.textContent).toBe('one two')
+      }).then(done)
     })
   })
 })
