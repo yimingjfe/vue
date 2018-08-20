@@ -5,6 +5,12 @@ import {
   set as setProp,
   del as delProp
 } from 'core/observer/index'
+// import {
+//   Observer,
+//   observe,
+//   set as setProp,
+//   del as delProp
+// } from 'core/observer/myobserver'
 import Dep from 'core/observer/dep'
 import { hasOwn } from 'core/util/index'
 

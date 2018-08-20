@@ -97,7 +97,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
         handleError(e, ctx, 'nextTick')
       }
     } else if (_resolve) {
-      _resolve(ctx)
+      _resolve(ctx)       // resolve 会执行多次？
     }
   })
   if (!pending) {

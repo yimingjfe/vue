@@ -43,7 +43,7 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
-      initProxy(vm)
+      initProxy(vm)                          // vm._renderProxy = new Proxy(vm, handlers) 添加handler,有属性渲染时使用，但没有会警告
     } else {
       vm._renderProxy = vm
     }

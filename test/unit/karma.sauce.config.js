@@ -80,7 +80,6 @@ var batches = [
 
 module.exports = function (config) {
   var batch = batches[process.argv[4] || 0]
-
   config.set(Object.assign(base, {
     singleRun: true,
     browsers: Object.keys(batch),

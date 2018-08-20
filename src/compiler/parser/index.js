@@ -49,10 +49,10 @@ export function createASTElement (
   parent: ASTElement | void
 ): ASTElement {
   return {
-    type: 1,
+    type: 1,      // 这是干嘛用的？
     tag,
     attrsList: attrs,
-    attrsMap: makeAttrsMap(attrs),
+    attrsMap: makeAttrsMap(attrs),   // 为什么要有一个map
     parent,
     children: []
   }
@@ -130,7 +130,7 @@ export function parse (
         element.ns = ns
       }
 
-      if (isForbiddenTag(element) && !isServerRendering()) {
+      if (isForbiddenTag(element) && !isServerRendering()) {  // style script标签， 报出警告
         element.forbidden = true
         process.env.NODE_ENV !== 'production' && warn(
           'Templates should only be responsible for mapping the state to the ' +

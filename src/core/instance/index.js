@@ -14,10 +14,10 @@ function Vue (options) {
   this._init(options)
 }
 
-initMixin(Vue)
-stateMixin(Vue)
-eventsMixin(Vue)
+initMixin(Vue)      // 在prototype上挂载_init
+stateMixin(Vue)     // prototype上挂载$data、$props、$set、$delete、$watch，指向this._data，this._props
+eventsMixin(Vue)    // $on、$once、$off、$emit
 lifecycleMixin(Vue)
-renderMixin(Vue)
+renderMixin(Vue)    // $nextTick、_render
 
 export default Vue

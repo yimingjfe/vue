@@ -26,7 +26,7 @@ export function initLifecycle (vm: Component) {
 
   // locate first non-abstract parent
   let parent = options.parent
-  if (parent && !options.abstract) {
+  if (parent && !options.abstract) {   // 抽象组件一般不渲染真实的dom,如keep-alive,transition
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }

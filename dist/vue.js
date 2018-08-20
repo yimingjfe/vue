@@ -469,9 +469,9 @@ function def (obj, key, val, enumerable) {
 }
 
 /**
- * Parse simple path.
+ * Parse simple path. 
  */
-var bailRE = /[^\w.$]/;
+var bailRE = /[^\w.$]/;    // \w 包括字母、数字、下划线
 function parsePath (path) {
   if (bailRE.test(path)) {
     return
@@ -3093,11 +3093,11 @@ var Watcher = function Watcher (
   vm._watchers.push(this);
   // options
   if (options) {
-    this.deep = !!options.deep;
-    this.user = !!options.user;
-    this.computed = !!options.computed;
-    this.sync = !!options.sync;
-    this.before = options.before;
+    this.deep = !!options.deep;  // 标识是否是深度观测
+    this.user = !!options.user;  // 标识观察者是开发者定义还是内部定义
+    this.computed = !!options.computed;// 标识是否是计算属性的观察者
+    this.sync = !!options.sync;// 标识当数据发生变化，是否同步求值并执行回调
+    this.before = options.before;// 数据变化后，更新执行前的钩子
   } else {
     this.deep = this.user = this.computed = this.sync = false;
   }
@@ -3114,7 +3114,7 @@ var Watcher = function Watcher (
   if (typeof expOrFn === 'function') {
     this.getter = expOrFn;
   } else {
-    this.getter = parsePath(expOrFn);
+    this.getter = parsePath(expOrFn);  // 返回了一个被柯里化的函数
     if (!this.getter) {
       this.getter = function () {};
       "development" !== 'production' && warn(
@@ -3137,7 +3137,7 @@ var Watcher = function Watcher (
  * Evaluate the getter, and re-collect dependencies.
  */
 Watcher.prototype.get = function get () {
-  pushTarget(this);
+  pushTarget(this);// Dep.target = this targetstack.push(Dep.target)
   var value;
   var vm = this.vm;
   try {
@@ -4603,7 +4603,7 @@ function initMixin (Vue) {
     // a uid
     vm._uid = uid$3++;
 
-    var startTag, endTag;
+    var startTag, endTag; 
     /* istanbul ignore if */
     if ("development" !== 'production' && config.performance && mark) {
       startTag = "vue-perf-start:" + (vm._uid);
@@ -4621,7 +4621,7 @@ function initMixin (Vue) {
       initInternalComponent(vm, options);
     } else {
       vm.$options = mergeOptions(
-        resolveConstructorOptions(vm.constructor),
+        resolveConstructorOptions(vm.constructor), 
         options || {},
         vm
       );
@@ -4739,11 +4739,11 @@ function Vue (options) {
   this._init(options);
 }
 
-initMixin(Vue);
-stateMixin(Vue);
-eventsMixin(Vue);
+initMixin(Vue);      // 在prototype上挂载_init
+stateMixin(Vue);     // prototype上挂载$data、$props、$set、$delete、$watch，指向this._data，this._props
+eventsMixin(Vue);    // $on、$once、$off、$emit
 lifecycleMixin(Vue);
-renderMixin(Vue);
+renderMixin(Vue);    // $nextTick、_render
 
 /*  */
 
@@ -10823,7 +10823,6 @@ function createCompilerCreator (baseCompile) {
           }
         }
       }
-
       var compiled = baseCompile(template, finalOptions);
       {
         errors.push.apply(errors, detectErrors(compiled.ast));
@@ -10883,7 +10882,7 @@ var shouldDecodeNewlinesForHref = inBrowser ? getShouldDecode(true) : false;
 
 /*  */
 
-var idToTemplate = cached(function (id) {
+var idToTemplate = cached(function (id) {     // cached函数缓存纯函数计算的值
   var el = query(id);
   return el && el.innerHTML
 });
@@ -10910,7 +10909,7 @@ Vue.prototype.$mount = function (
     if (template) {
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {
-          template = idToTemplate(template);
+          template = idToTemplate(template);   // 这里会调用很多次吗？用cached缓存
           /* istanbul ignore if */
           if ("development" !== 'production' && !template) {
             warn(

@@ -97,7 +97,7 @@ function initProps (vm: Component, propsOptions: Object) {
         }
       })
     } else {
-      defineReactive(props, key, value)
+      defineReactive(props, key, value)  // 为什么不用observe?
     }
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
@@ -109,7 +109,7 @@ function initProps (vm: Component, propsOptions: Object) {
   toggleObserving(true)
 }
 
-function initData (vm: Component) {
+function initData (vm: Component) { // observe(data)
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)

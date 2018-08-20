@@ -80,7 +80,7 @@ describe('Scheduler', () => {
       data: {
         a: 1
       },
-      watch: {
+      watch: {        // watch的执行顺序为什么比beforeUpdate早?
         a () {
           calls.push(1)
         }

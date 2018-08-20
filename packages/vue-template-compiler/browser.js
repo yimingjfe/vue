@@ -112,7 +112,7 @@ function isPlainObject (obj) {
  */
 function isValidArrayIndex (val) {
   var n = parseFloat(String(val));
-  return n >= 0 && Math.floor(n) === n && isFinite(val)
+  return n >= 0 && Math.floor(n) === n && isFinite(val)   // 是一个合法的数字，大于0的数字，是一个整数，非无限的整数
 }
 
 /**

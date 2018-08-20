@@ -137,7 +137,7 @@ export function queueWatcher (watcher: Watcher) {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
       let i = queue.length - 1
-      while (i > index && queue[i].id > watcher.id) {
+      while (i > index && queue[i].id > watcher.id) { // 保证watcher的执行顺序，因为此时queue已经排过序，执行了  往前遍历，找到第一个正好比它小的
         i--
       }
       queue.splice(i + 1, 0, watcher)

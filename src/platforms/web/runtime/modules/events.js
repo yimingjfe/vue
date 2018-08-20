@@ -28,7 +28,7 @@ function normalizeEvents (on) {
 
 let target: any
 
-function createOnceHandler (handler, event, capture) {
+function createOnceHandler (handler, event, capture) {  // 多个onceHandler怎么办？
   const _target = target // save current target element in closure
   return function onceHandler () {
     const res = handler.apply(null, arguments)

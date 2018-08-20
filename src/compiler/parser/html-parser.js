@@ -67,7 +67,7 @@ export function parseHTML (html, options) {
     // Make sure we're not in a plaintext content element like script/style
     if (!lastTag || !isPlainTextElement(lastTag)) {
       let textEnd = html.indexOf('<')
-      if (textEnd === 0) {
+      if (textEnd === 0) {  // 证明前面没有文本
         // Comment:
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
@@ -108,7 +108,7 @@ export function parseHTML (html, options) {
         }
 
         // Start tag:
-        const startTagMatch = parseStartTag()
+        const startTagMatch = parseStartTag()  // 拿到开始标签符的match
         if (startTagMatch) {
           handleStartTag(startTagMatch)
           if (shouldIgnoreFirstNewline(lastTag, html)) {
@@ -121,6 +121,7 @@ export function parseHTML (html, options) {
       let text, rest, next
       if (textEnd >= 0) {
         rest = html.slice(textEnd)
+        // <之后没有标签,把它当做纯文本,确定最后一个textEnd
         while (
           !endTag.test(rest) &&
           !startTagOpen.test(rest) &&
@@ -145,7 +146,7 @@ export function parseHTML (html, options) {
       if (options.chars && text) {
         options.chars(text)
       }
-    } else {
+    } else {  // 如果匹配到xxxx</style>  lastTag && isPlainTextElement(lastTag)
       let endTagLength = 0
       const stackedTag = lastTag.toLowerCase()
       const reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'))
@@ -186,7 +187,7 @@ export function parseHTML (html, options) {
     html = html.substring(n)
   }
 
-  function parseStartTag () {
+  function parseStartTag () { // 前进，match.attrs.push(attr)
     const start = html.match(startTagOpen)
     if (start) {
       const match = {
@@ -201,7 +202,7 @@ export function parseHTML (html, options) {
         match.attrs.push(attr)
       }
       if (end) {
-        match.unarySlash = end[1]
+        match.unarySlash = end[1]     // /
         advance(end[0].length)
         match.end = index
         return match
@@ -209,7 +210,7 @@ export function parseHTML (html, options) {
     }
   }
 
-  function handleStartTag (match) {
+  function handleStartTag (match) { // 处理attrs,非一元标签推入栈，调用options.start
     const tagName = match.tagName
     const unarySlash = match.unarySlash
 
@@ -222,7 +223,7 @@ export function parseHTML (html, options) {
       }
     }
 
-    const unary = isUnaryTag(tagName) || !!unarySlash
+    const unary = isUnaryTag(tagName) || !!unarySlash  // 是否需要闭合标签
 
     const l = match.attrs.length
     const attrs = new Array(l)
@@ -254,7 +255,7 @@ export function parseHTML (html, options) {
     }
   }
 
-  function parseEndTag (tagName, start, end) {
+  function parseEndTag (tagName, start, end) { // 前进  options.end 出栈
     let pos, lowerCasedTagName
     if (start == null) start = index
     if (end == null) end = index
@@ -275,7 +276,7 @@ export function parseHTML (html, options) {
       pos = 0
     }
 
-    if (pos >= 0) {
+    if (pos >= 0) {   // 没有tagName,或者找到了
       // Close all the open elements, up the stack
       for (let i = stack.length - 1; i >= pos; i--) {
         if (process.env.NODE_ENV !== 'production' &&
@@ -294,11 +295,11 @@ export function parseHTML (html, options) {
       // Remove the open elements from the stack
       stack.length = pos
       lastTag = pos && stack[pos - 1].tag
-    } else if (lowerCasedTagName === 'br') {
+    } else if (lowerCasedTagName === 'br') { // 如果是</br>
       if (options.start) {
         options.start(tagName, [], true, start, end)
       }
-    } else if (lowerCasedTagName === 'p') {
+    } else if (lowerCasedTagName === 'p') { // 如果是</p>
       if (options.start) {
         options.start(tagName, [], false, start, end)
       }

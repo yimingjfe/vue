@@ -9,7 +9,7 @@ import { query } from './util/index'
 import { compileToFunctions } from './compiler/index'
 import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat'
 
-const idToTemplate = cached(id => {
+const idToTemplate = cached(id => {     // cached函数缓存纯函数计算的值
   const el = query(id)
   return el && el.innerHTML
 })
@@ -36,7 +36,7 @@ Vue.prototype.$mount = function (
     if (template) {
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {
-          template = idToTemplate(template)
+          template = idToTemplate(template)   // 这里会调用很多次吗？用cached缓存
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(

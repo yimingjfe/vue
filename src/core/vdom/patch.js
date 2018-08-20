@@ -465,7 +465,7 @@ export function createPatchFunction (backend) {
         newStartVnode = newCh[++newStartIdx]
       }
     }
-    if (oldStartIdx > oldEndIdx) {
+    if (oldStartIdx > oldEndIdx) {    // old先完成就证明还有新的
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
@@ -536,10 +536,10 @@ export function createPatchFunction (backend) {
     const oldCh = oldVnode.children
     const ch = vnode.children
     if (isDef(data) && isPatchable(vnode)) {
-      for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
+      for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)  // 根据现在vnode的状态，更改vnode上的属性，然后更改dom上的属性
       if (isDef(i = data.hook) && isDef(i = i.update)) i(oldVnode, vnode)
     }
-    if (isUndef(vnode.text)) {
+    if (isUndef(vnode.text)) {  // 如果不是文本节点的话
       if (isDef(oldCh) && isDef(ch)) {
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
       } else if (isDef(ch)) {
@@ -683,7 +683,7 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    if (isUndef(vnode)) {
+    if (isUndef(vnode)) {       // 新节点没有，老节点有，删除老节点
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
@@ -691,11 +691,11 @@ export function createPatchFunction (backend) {
     let isInitialPatch = false
     const insertedVnodeQueue = []
 
-    if (isUndef(oldVnode)) {
+    if (isUndef(oldVnode)) {  // 老节点没有，直接添加
       // empty mount (likely as component), create new root element
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
-    } else {
+    } else {  // 此时应该处理新、老节点都有， 或者都没有（应该不存在这种情况）
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
@@ -709,7 +709,7 @@ export function createPatchFunction (backend) {
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
-          if (isTrue(hydrating)) {
+          if (isTrue(hydrating)) {      // 如果是服务端渲染，走这一块逻辑
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true)
               return oldVnode

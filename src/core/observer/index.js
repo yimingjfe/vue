@@ -144,7 +144,6 @@ export function defineReactive (
   if (property && property.configurable === false) {
     return
   }
-
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
@@ -161,7 +160,7 @@ export function defineReactive (
       if (Dep.target) {
         dep.depend()
         if (childOb) {
-          childOb.dep.depend()
+          childOb.dep.depend()    // 只影响Vue.set的操作？
           if (Array.isArray(value)) {
             dependArray(value)
           }
@@ -203,7 +202,7 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   }
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
-    target.splice(key, 1, val)
+    target.splice(key, 1, val)      // 加入的每一个对象会在splice中observe
     return val
   }
   if (key in target && !(key in Object.prototype)) {
@@ -265,8 +264,8 @@ export function del (target: Array<any> | Object, key: any) {
 function dependArray (value: Array<any>) {
   for (let e, i = 0, l = value.length; i < l; i++) {
     e = value[i]
-    e && e.__ob__ && e.__ob__.dep.depend()
-    if (Array.isArray(e)) {
+    e && e.__ob__ && e.__ob__.dep.depend()      // 保证数组中的元素被收集了依赖
+    if (Array.isArray(e)) {           // // [name: obj1, obj2, [[obj3, obj4], obj5]]  这种情况保证了obj3和obj4也会收集依赖
       dependArray(e)
     }
   }

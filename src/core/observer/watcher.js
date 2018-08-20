@@ -56,11 +56,11 @@ export default class Watcher {
     vm._watchers.push(this)
     // options
     if (options) {
-      this.deep = !!options.deep
-      this.user = !!options.user
-      this.computed = !!options.computed
-      this.sync = !!options.sync
-      this.before = options.before
+      this.deep = !!options.deep    // 标识是否是深度观测
+      this.user = !!options.user    // 标识观察者是开发者定义还是内部定义
+      this.computed = !!options.computed  // 标识是否是计算属性的观察者
+      this.sync = !!options.sync  // 标识当数据发生变化，是否同步求值并执行回调
+      this.before = options.before  // 数据变化后，更新执行前的钩子
     } else {
       this.deep = this.user = this.computed = this.sync = false
     }
@@ -79,7 +79,7 @@ export default class Watcher {
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
-      this.getter = parsePath(expOrFn)
+      this.getter = parsePath(expOrFn)    // 返回了一个被柯里化的函数
       if (!this.getter) {
         this.getter = function () {}
         process.env.NODE_ENV !== 'production' && warn(
@@ -102,7 +102,7 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
-    pushTarget(this)
+    pushTarget(this)  // Dep.target = this targetstack.push(Dep.target)
     let value
     const vm = this.vm
     try {
@@ -130,10 +130,10 @@ export default class Watcher {
    */
   addDep (dep: Dep) {
     const id = dep.id
-    if (!this.newDepIds.has(id)) {
+    if (!this.newDepIds.has(id)) {  // 执行一次getter的时候this.newDepIds是否被收集,this.depIds就是上次getter收集的
       this.newDepIds.add(id)
       this.newDeps.push(dep)
-      if (!this.depIds.has(id)) {
+      if (!this.depIds.has(id)) { // this.depIds代表上次收集过，
         dep.addSub(this)
       }
     }
@@ -142,16 +142,16 @@ export default class Watcher {
   /**
    * Clean up for dependency collection.
    */
-  cleanupDeps () {
+  cleanupDeps () {  // watcher表达式又执行了一次，这次执行时新的里面没有收集的，说明可以废弃掉了，就删掉
     let i = this.deps.length
-    while (i--) {
+    while (i--) {   // 清理之后，this.newDepIds中对应的应该和this.deps中对应的一致了
       const dep = this.deps[i]
       if (!this.newDepIds.has(dep.id)) {
         dep.removeSub(this)
       }
     }
     let tmp = this.depIds
-    this.depIds = this.newDepIds
+    this.depIds = this.newDepIds  // this.depIds与this.newDepIds互换
     this.newDepIds = tmp
     this.newDepIds.clear()
     tmp = this.deps
@@ -177,7 +177,7 @@ export default class Watcher {
         // performed just-in-time in this.evaluate() when the computed property
         // is accessed.
         this.dirty = true
-      } else {
+      } else {    // 有订阅者比如render function的watcher，就重新计算值，然后通知对应的watcher
         // In activated mode, we want to proactively perform the computation
         // but only notify our subscribers when the value has indeed changed.
         this.getAndInvoke(() => {
@@ -201,7 +201,7 @@ export default class Watcher {
     }
   }
 
-  getAndInvoke (cb: Function) {
+  getAndInvoke (cb: Function) { // 获取值，满足条件调用cb
     const value = this.get()
     if (
       value !== this.value ||

@@ -70,8 +70,8 @@ export function updateListeners (
       }
       add(event.name, cur, event.once, event.capture, event.passive, event.params)
     } else if (cur !== old) {
-      old.fns = cur
-      on[name] = old
+      old.fns = cur      // 更新触发的钩子
+      on[name] = old     // 更新对应的数据
     }
   }
   for (name in oldOn) {
