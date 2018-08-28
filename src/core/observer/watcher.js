@@ -128,7 +128,7 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
-  addDep (dep: Dep) {
+  addDep (dep: Dep) { // 本次没有收集过，上次也没有收集过的，再收集
     const id = dep.id
     if (!this.newDepIds.has(id)) {  // 执行一次getter的时候this.newDepIds是否被收集,this.depIds就是上次getter收集的
       this.newDepIds.add(id)
@@ -142,10 +142,11 @@ export default class Watcher {
   /**
    * Clean up for dependency collection.
    */
+  // 本次不收集watcher的dep中去掉watcher
   cleanupDeps () {  // watcher表达式又执行了一次，这次执行时新的里面没有收集的，说明可以废弃掉了，就删掉
     let i = this.deps.length
-    while (i--) {   // 清理之后，this.newDepIds中对应的应该和this.deps中对应的一致了
-      const dep = this.deps[i]
+    while (i--) {   // watcher.get执行，没有如果老的dep没有收集这个watcher，说明老的dep已经弃用这个watcher
+      const dep = this.deps[i]  // 这一步做完之后this.deps中，本次没有收集这个watcher，dep会删掉这个watcher
       if (!this.newDepIds.has(dep.id)) {
         dep.removeSub(this)
       }
@@ -214,7 +215,7 @@ export default class Watcher {
       // set new value
       const oldValue = this.value
       this.value = value
-      this.dirty = false
+      this.dirty = false  // dirty，普通值有没有什么用?
       if (this.user) {
         try {
           cb.call(this.vm, value, oldValue)

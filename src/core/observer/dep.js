@@ -49,7 +49,7 @@ Dep.target = null
 const targetStack = []
 
 export function pushTarget (_target: ?Watcher) {
-  if (Dep.target) targetStack.push(Dep.target)
+  if (Dep.target) targetStack.push(Dep.target)  // 老的Dep.target存在的话，就放入栈中，执行完再取
   Dep.target = _target
 }
 

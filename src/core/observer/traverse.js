@@ -15,7 +15,7 @@ export function traverse (val: any) {
   _traverse(val, seenObjects)
   seenObjects.clear()
 }
-
+// dep.id重复的就不再访问，为什么？
 function _traverse (val: any, seen: SimpleSet) {
   let i, keys
   const isA = Array.isArray(val)
