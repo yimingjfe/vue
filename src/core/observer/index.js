@@ -16,7 +16,7 @@ import {
   isServerRendering
 } from '../util/index'
 
-const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
+const arrayKeys = Object.getOwnPropertyNames(arrayMethods)  // 相比Object.keys，能返回不可枚举的属性
 
 /**
  * In some cases we may want to disable observation inside a component's
@@ -43,12 +43,12 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this)    // arrayMethods里面需要操作__ob__
     if (Array.isArray(value)) {
       const augment = hasProto
         ? protoAugment
         : copyAugment
-      augment(value, arrayMethods, arrayKeys)
+      augment(value, arrayMethods, arrayKeys)   // 覆盖数组的所有方法
       this.observeArray(value)
     } else {
       this.walk(value)
@@ -60,7 +60,7 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
-  walk (obj: Object) {
+  walk (obj: Object) {    // 经过constructor中的判断，此时可以确定walk的object是一个object，而不是array
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i])
@@ -158,12 +158,12 @@ export function defineReactive (
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
-        dep.depend()
-        if (childOb) {
-          childOb.dep.depend()    // 只影响Vue.set的操作？
-          if (Array.isArray(value)) {
-            dependArray(value)
-          }
+        dep.depend()        // Dep.target.addDep(dep)  dep.addWatcher(watcher)
+        if (childOb) {      // data{a: {}}  对a的属性set或者delete，等同于a发生了变化
+          childOb.dep.depend()
+        }
+        if (Array.isArray(value)) {   // 如果是一个数组的话,数组中的元素是对象，对象属性的变化，都会触发Dep.target这个watcher的执行
+          dependArray(value)
         }
       }
       return value
@@ -171,7 +171,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === value || (newVal !== newVal && value !== value)) { // value是NaN,或者newValue是NaN就不再处理
         return
       }
       /* eslint-enable no-self-compare */
@@ -183,8 +183,8 @@ export function defineReactive (
       } else {
         val = newVal
       }
-      childOb = !shallow && observe(newVal)
-      dep.notify()
+      childOb = !shallow && observe(newVal)// 对象替换，要重新观测
+      dep.notify()// watcher.notify()
     }
   })
 }
